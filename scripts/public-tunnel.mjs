@@ -20,8 +20,6 @@ async function publishEndpoint(apiBase) {
   const diff = await git(['diff', '--cached', '--name-only', '--', 'public/config.json']);
   if (diff.stdout.trim()) await git(['commit', '--only', '-m', 'Update public server connection', '--', 'public/config.json']);
   await git(['push', 'github', 'main']);
-  const split = await git(['subtree', 'split', '--prefix=public', 'main']);
-  await git(['push', 'github', `${split.stdout.trim()}:refs/heads/gh-pages`]);
   await log('Адрес сервера опубликован в GitHub Pages.');
 }
 function start() {

@@ -33,7 +33,7 @@ npm test
 
 ## Публикация и сохранение на компьютере
 
-Адрес открытки: https://nikitos812.github.io/dlya-mashi/. Ветка `main` содержит исходники, а `gh-pages` — только содержимое папки `public`. GitHub Pages отдаёт саму открытку. Данные гостей GitHub не хранит.
+Адрес открытки: https://nikitos812.github.io/dlya-mashi/. Ветка `main` содержит исходники. Процесс `.github/workflows/pages.yml` проверяет JavaScript и публикует только папку `public` в GitHub Pages. Данные гостей GitHub не хранит. В HTML есть версия сборки, а ссылки на CSS и JavaScript содержат номер версии для обновления браузерного кэша.
 
 Подарки, правки и ответы идут через Cloudflare Tunnel на локальный Node.js-сервер и записываются непосредственно в `C:\Users\Nikita\Desktop\ng\data\letters.jsonl`. Для сохранения компьютер, интернет, сервер и соединение должны работать. Если они недоступны, форма показывает ошибку и остаётся открытой с введённым текстом; успешного сохранения без подтверждения сервера нет.
 
@@ -46,7 +46,7 @@ cd C:\Users\Nikita\Desktop\ng
 
 Скрипт запускает сервер и фоновое соединение. Закрытие терминала не прерывает их. Для соединения используется официальный подписанный Cloudflare `cloudflared.exe` в `.deploy` (https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-windows-amd64.exe). Исполняемый файл не хранится в Git.
 
-Бесплатный Quick Tunnel выдаёт временный технический адрес `*.trycloudflare.com`. При его смене скрипт обновляет `public/config.json` и ветку `gh-pages`, используя официальный Git Credential Manager. Адрес самой открытки остаётся тем же; обновление на GitHub Pages может занять несколько минут. Это бесплатное соединение без гарантии доступности Cloudflare. Подробности: https://developers.cloudflare.com/tunnel/get-started/quick-tunnels/.
+Бесплатный Quick Tunnel выдаёт временный технический адрес `*.trycloudflare.com`. При его смене скрипт обновляет `public/config.json` и ветку `main`, используя официальный Git Credential Manager. После этого GitHub Actions публикует обновлённый адрес сервера. Адрес самой открытки остаётся тем же; обновление на GitHub Pages может занять несколько минут. Это бесплатное соединение без гарантии доступности Cloudflare. Подробности: https://developers.cloudflare.com/tunnel/get-started/quick-tunnels/.
 
 Журнал соединения: `data/public-tunnel.log`. Остановить доступ из интернета: `./stop-public.ps1`. Отдельно остановить сервер: `./stop-local.ps1`. Автозагрузка Windows не настраивалась.
 
