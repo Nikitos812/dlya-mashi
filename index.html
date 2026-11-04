@@ -25,22 +25,33 @@
       <div id="letter" class="letter">
         <article id="front" class="paper front">
           <div class="paper-top"><span>Бухарест · Новый год</span><span>01 / 02</span></div>
-          <div class="handwriting"><h2 tabindex="-1">Дорогая Маша,</h2><p>Я приглашаю тебя в Бухарест на празднование Нового года. Ведь в этот прекрасный праздник я хочу, чтобы ты была рядом со мной.</p><p>Точное место празднования я пока не могу сказать, но я точно хочу, чтобы этот праздник мы провели вместе, как и всю свою оставшуюся жизнь хочу провести рядом с тобой.</p><p class="signature">С любовью,<br>твой Никита <span>♡</span></p></div>
+          <div class="handwriting"><h2 tabindex="-1">Дорогая Маша!</h2><p>Я приглашаю тебя в Бухарест на празднование Нового года. В этот прекрасный праздник я очень хочу, чтобы ты была рядом со мной.</p><p>Точное место празднования я пока не могу назвать, но одно знаю точно: я хочу встретить этот Новый год с тобой. И всю оставшуюся жизнь — провести рядом с тобой.</p><p class="signature">С любовью,<br>твой Никита <span>♡</span></p></div>
           <div class="paper-bottom">У меня есть ещё кое-что для тебя <span>✧</span></div>
         </article>
         <article id="back" class="paper back" hidden>
           <div class="paper-top"><span>Маленькие новогодние желания</span><span>02 / 02</span></div>
-          <h2 tabindex="-1">А что под ёлкой?</h2><p class="back-copy">Независимо от ответа <em>(хотя я очень надеюсь, что ты согласишься)</em>, можешь добавить подарок, который тебе хочется получить.</p>
+          <h2 tabindex="-1">А что под ёлкой?</h2><p class="back-copy">Каким бы ни был твой ответ, ты можешь добавить подарок, который тебе хочется получить. <em>А я очень надеюсь, что ты согласишься.</em></p>
           <div class="christmas-scene"><img src="./christmas.png" alt="Уютная новогодняя ёлка с огоньками рядом с камином"><div class="photo-shade"></div><span class="photo-caption">Пусть желания сбываются</span><div id="gift-tokens" class="gift-tokens"></div><button id="add-gift" class="add-gift" aria-label="Добавить подарок">+</button></div>
           <p id="gift-hint" class="gift-hint">Нажми на плюсик рядом с ёлкой ♡</p><ul id="gift-list" class="gift-list"></ul>
-          <div id="reply-area" hidden><button id="reply" class="primary">Ответить на письмо <span>↗</span></button><p id="reply-status" class="hint" aria-live="polite"></p></div>
-          <div class="paper-bottom">Самый главный подарок — ты рядом <span>♡</span></div>
+          <div id="reply-area" hidden><button id="reply" class="primary">Ответить на письмо <span>↗</span></button><p id="reply-status" class="hint" aria-live="polite"></p><button id="show-ending" class="text-button" hidden>Ещё несколько слов для тебя ♡</button></div>
+          <div class="paper-bottom">Главный подарок — быть рядом с тобой <span>♡</span></div>
         </article>
       </div>
       <button id="flip" class="text-button">Смотреть оборот <span>↻</span></button>
     </section>
+    <section id="ending-scene" class="ending-scene" aria-labelledby="ending-title" hidden>
+      <div class="ending-card">
+        <div class="ending-heart" aria-hidden="true"><svg viewBox="0 0 100 100" fill="none"><path d="M50 78S16 57 16 34C16 16 40 12 50 30C60 12 84 16 84 34C84 57 50 78 50 78Z" stroke="currentColor" stroke-width="1.8"/><path d="M26 34C26 27 31 25 35 26" stroke="currentColor" stroke-opacity=".4" stroke-width="1.5" stroke-linecap="round"/></svg><span>✧</span></div>
+        <p class="ending-thanks">Спасибо за твой ответ.</p>
+        <h2 id="ending-title" tabindex="-1">Я тебя люблю,<br><em>Маша.</em></h2>
+        <p class="ending-wish">Моё главное желание —<br>быть рядом с тобой.</p>
+        <p class="ending-signature">Твой Никита</p>
+        <a id="ending-telegram" class="primary" href="https://t.me/enograten" hidden>Написать Никите <span>↗</span></a>
+        <button id="return-letter" class="text-button">Вернуться к письму <span>↶</span></button>
+      </div>
+    </section>
   </main>
   <footer aria-label="С любовью"><span>♡</span></footer>
-  <dialog id="modal" aria-labelledby="modal-title" aria-describedby="modal-description"><form id="modal-form"><button type="button" id="close-modal" class="close-modal" aria-label="Закрыть">×</button><span class="modal-ornament" aria-hidden="true">✧</span><h2 id="modal-title"></h2><p id="modal-description"></p><label id="field-label" for="message"></label><textarea id="message" maxlength="2000" rows="4"></textarea><p id="form-error" class="error" role="alert"></p><button id="submit-message" class="primary" type="submit"></button><div id="quick-replies" hidden><span class="or">или выбери ответ</span><div class="choices"><button type="button" data-answer="Да, я согласна! ♡">Да ♡</button><button type="button" data-answer="Нет">Нет</button><button type="button" id="personal">Ответить лично ↗</button></div><p class="telegram-note">Откроется Telegram Никиты</p></div></form></dialog>
+  <dialog id="modal" aria-labelledby="modal-title" aria-describedby="modal-description"><form id="modal-form"><button type="button" id="close-modal" class="close-modal" aria-label="Закрыть">×</button><span class="modal-ornament" aria-hidden="true">✧</span><h2 id="modal-title"></h2><p id="modal-description"></p><label id="field-label" for="message"></label><textarea id="message" maxlength="2000" rows="4"></textarea><p id="form-error" class="error" role="alert"></p><button id="submit-message" class="primary" type="submit"></button><div id="quick-replies" hidden><span class="or">или выбери ответ</span><div class="choices"><button type="button" data-answer="Да, я согласна! ♡">Да ♡</button><button type="button" data-answer="Нет">Нет</button><button type="button" id="personal">Ответить лично ↗</button></div><p class="telegram-note">Ответить лично можно в Telegram</p></div></form></dialog>
   <div id="toast" class="toast" role="status"></div>
 </body></html>

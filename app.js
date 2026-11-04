@@ -56,9 +56,25 @@ function render() {
   $('gift-hint').textContent = gifts.length ? 'Желание сохранено. Можно добавить ещё ♡' : 'Нажми на плюсик рядом с ёлкой ♡';
   $('reply-area').hidden = !gifts.length;
   const reply = entries.filter(e => e.type === 'reply').at(-1);
+  $('show-ending').hidden = !reply;
   $('reply-status').textContent = reply ? 'Твой ответ сохранён. Спасибо за искренность ♡' : '';
   $('reply').firstChild.textContent = reply ? 'Дополнить ответ ' : 'Ответить на письмо ';
 }
+function showEnding(personal = false) {
+  $('envelope-scene').hidden = true;
+  $('letter-scene').hidden = true;
+  $('ending-telegram').hidden = !personal;
+  $('ending-scene').hidden = false;
+  window.scrollTo({ top: 0, behavior: 'instant' });
+  $('ending-title').focus({ preventScroll: true });
+}
+$('show-ending').addEventListener('click', () => showEnding());
+$('return-letter').addEventListener('click', () => {
+  $('ending-scene').hidden = true;
+  $('letter-scene').hidden = false;
+  window.scrollTo({ top: 0, behavior: 'instant' });
+  (back ? $('back') : $('front')).querySelector('h2').focus({ preventScroll: true });
+});
 apiFetch(`/api/entries?session=${sessionId}`).then(r => { if (!r.ok) throw Error(); return r.json(); }).then(data => { entries = data.entries; render(); }).catch(() => toast('Не получилось загрузить желания. Попробуй немного позже.'));
 $('unseal').addEventListener('click', async () => {
   $('unseal').disabled = true; $('envelope').classList.add('opened');
@@ -97,8 +113,9 @@ async function save(text, personal = false) {
     const data = await response.json(); if (!response.ok) throw Error(data.error || 'Не удалось сохранить.');
     const entryIndex = entries.findIndex(e => e.id === data.entry.id);
     if (entryIndex === -1) entries.push(data.entry); else entries[entryIndex] = data.entry;
-    render(); $('modal').close(); pending = null; toast(editingId ? 'Желание обновлено ♡' : mode === 'gift' ? 'Ещё одно желание под ёлкой ♡' : 'Твой ответ сохранён ♡');
-    if (personal) window.location.assign('https://t.me/enograten');
+    render(); $('modal').close(); pending = null;
+    if (mode === 'reply') showEnding(personal);
+    else toast(editingId ? 'Желание обновлено ♡' : 'Ещё одно желание под ёлкой ♡');
   } catch (e) { $('form-error').textContent = e.name === 'TimeoutError' ? 'Сервер не ответил. Текст остался в окне — попробуй ещё раз.' : (e.message === 'Failed to fetch' ? 'Не удалось связаться с сервером. Текст остался в окне — попробуй ещё раз, когда связь появится.' : e.message); }
   finally { saving = false; $('modal').querySelectorAll('button').forEach(b => b.disabled = false); }
 }
