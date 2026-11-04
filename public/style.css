@@ -42,3 +42,21 @@
 .gift-name{flex:1;min-width:0;white-space:pre-wrap;overflow-wrap:anywhere}
 .edit-gift{flex-shrink:0;border:1px solid #d9b8bf;border-radius:3px;padding:10px 9px;min-height:40px;background:#f7e8e866;color:var(--wine);font:11px Arial,sans-serif}
 .edit-gift:hover{background:#f3dfe2}
+.ending-scene{width:min(100%,520px);min-height:calc(100svh - 140px);padding:30px 24px 15px;margin:0 auto;display:flex;align-items:center;justify-content:center;text-align:center;animation:ending-arrive .9s ease both}
+.ending-card{width:100%;padding:28px 20px 18px}
+.ending-heart{width:108px;height:108px;position:relative;margin:0 auto 22px;color:#a56375;background:radial-gradient(circle,#f8e0e57a,transparent 68%);animation:heart-breathe 4s ease-in-out infinite}
+.ending-heart svg{width:100%;height:100%;filter:drop-shadow(0 4px 8px #914b6120)}
+.ending-heart span{position:absolute;right:-5px;top:10px;color:#bd927f;font:26px Georgia,serif}
+.ending-thanks{font:italic 16px/1.6 Georgia,serif;color:#a07d80;margin:0 0 24px}
+.ending-card h2{font:400 clamp(38px,10vw,51px)/1.15 Georgia,serif;letter-spacing:-1px;color:var(--wine);margin:0}
+.ending-card h2 em{font-weight:400}
+.ending-wish{font:15px/1.8 Georgia,serif;color:#8e6b70;margin:25px 0 15px}
+.ending-signature{font:30px/1.5 Caveat,cursive;color:var(--wine);margin:16px 0 27px}
+.ending-card .primary{text-decoration:none;margin-bottom:10px}
+.ending-card .text-button{display:block;margin:0 auto;font-size:12px;padding:16px 10px;min-height:44px}
+.ending-card .text-button span{margin-left:9px}
+#show-ending{padding:5px 8px 10px;min-height:44px;font:italic 13px Georgia,serif}
+@keyframes ending-arrive{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes heart-breathe{50%{transform:scale(1.05)}}
+@media(max-height:700px){.ending-scene{padding-top:15px}.ending-card{padding-top:12px}.ending-heart{width:80px;height:80px;margin-bottom:12px}.ending-thanks{margin-bottom:18px}.ending-signature{margin-bottom:15px}}
+@media(prefers-reduced-motion:reduce){.ending-scene,.ending-heart{animation:none}}
