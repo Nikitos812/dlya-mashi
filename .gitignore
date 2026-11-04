@@ -1,0 +1,10 @@
+data/*
+!data/.gitkeep
+node_modules/
+.env
+
+.openai/
+preview-*.jpg
+dist/
+.deploy/
+.env.*
