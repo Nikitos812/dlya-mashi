@@ -27,7 +27,9 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - name: Check JavaScript
-        run: node --check public/app.js
+        run: |
+          node --check public/app.js
+          node --test api.test.mjs
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v4
         with:
@@ -36,4 +38,4 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v5
         with:
-          timeout: 1200000
+          timeout: 600000

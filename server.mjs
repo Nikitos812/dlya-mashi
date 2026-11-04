@@ -71,7 +71,7 @@ export function createServer({ dataDir = path.join(root, 'data'), allowedOrigins
         return result ? send(201, { entry: result }) : send(409, { error: 'Сначала добавь хотя бы один подарок.' });
       }
       if (!['GET', 'HEAD'].includes(req.method)) return send(405, { error: 'Метод не поддерживается.' });
-      const assets = { '/': ['index.html', 'text/html; charset=utf-8'], '/config.json': ['config.json', 'application/json'], '/style.css': ['style.css', 'text/css; charset=utf-8'], '/app.js': ['app.js', 'text/javascript; charset=utf-8'], '/christmas.png': ['christmas.png', 'image/png'], '/caveat.ttf': ['caveat.ttf', 'font/ttf'], '/FONT-LICENSE.txt': ['FONT-LICENSE.txt', 'text/plain; charset=utf-8'] };
+      const assets = { '/': ['index.html', 'text/html; charset=utf-8'], '/config.json': ['config.json', 'application/json'], '/style.css': ['style.css', 'text/css; charset=utf-8'], '/app.js': ['app.js', 'text/javascript; charset=utf-8'], '/api.js': ['api.js', 'text/javascript; charset=utf-8'], '/christmas.png': ['christmas.png', 'image/png'], '/caveat.ttf': ['caveat.ttf', 'font/ttf'], '/FONT-LICENSE.txt': ['FONT-LICENSE.txt', 'text/plain; charset=utf-8'] };
       const asset = assets[url.pathname];
       if (!asset) return send(404, { error: 'Страница не найдена.' });
       const content = await readFile(path.join(root, 'public', asset[0]));

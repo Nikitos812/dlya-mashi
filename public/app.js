@@ -1,20 +1,15 @@
+import { createApiClient, ApiError, requestErrorMessage } from './api.js?v=20261104-3';
+
 const $ = id => document.getElementById(id);
 const sleep = ms => new Promise(r => setTimeout(r, matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : ms));
 const makeId = () => '10000000-1000-4000-8000-100000000000'.replace(/[018]/g,c => (Number(c) ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> Number(c) / 4).toString(16));
 let sessionId;
 try { sessionId = localStorage.getItem('masha-letter-session'); if (!sessionId) { sessionId = makeId(); localStorage.setItem('masha-letter-session', sessionId); } } catch { sessionId = makeId(); }
 let entries = [], mode = 'gift', saving = false, pending = null, editingId = null, back = false, turning = false;
-async function apiFetch(path, options = {}) {
-  let apiBase = '';
-  if (location.hostname === 'nikitos812.github.io') {
-    const configResponse = await fetch(new URL('./config.json', location.href), { cache: 'no-store', signal: AbortSignal.timeout(12000) });
-    if (!configResponse.ok) throw Error('Не удалось подключиться. Попробуй немного позже.');
-    const config = await configResponse.json();
-    if (!config.apiBase || !/^https:\/\/[a-z0-9-]+\.trycloudflare\.com$/.test(config.apiBase)) throw Error('Не удалось подключиться. Попробуй немного позже.');
-    apiBase = config.apiBase;
-  }
-  return fetch(apiBase + path, { ...options, credentials: 'omit', signal: options.signal || AbortSignal.timeout(12000) });
-}
+const apiFetch = createApiClient({
+  configUrl: location.hostname === 'nikitos812.github.io' ? new URL('./config.json', location.href).href : null,
+  onRetry: () => { if (saving) $('submit-message').textContent = 'Пробую ещё раз…'; }
+});
 function toast(text) { $('toast').textContent = text; $('toast').classList.add('visible'); setTimeout(() => $('toast').classList.remove('visible'), 3500); }
 function render() {
   const gifts = entries.filter(e => e.type === 'gift');
@@ -75,7 +70,7 @@ $('return-letter').addEventListener('click', () => {
   window.scrollTo({ top: 0, behavior: 'instant' });
   (back ? $('back') : $('front')).querySelector('h2').focus({ preventScroll: true });
 });
-apiFetch(`/api/entries?session=${sessionId}`).then(r => { if (!r.ok) throw Error(); return r.json(); }).then(data => { entries = data.entries; render(); }).catch(() => toast('Не получилось загрузить желания. Попробуй немного позже.'));
+apiFetch(`/api/entries?session=${sessionId}`).then(r => { if (!r.ok) throw Error(); return r.data; }).then(data => { entries = data.entries; render(); }).catch(() => toast('Не получилось загрузить желания. Попробуй немного позже.'));
 $('unseal').addEventListener('click', async () => {
   $('unseal').disabled = true; $('envelope').classList.add('opened');
   await sleep(1450); $('unseal').hidden = true; $('read').hidden = false; $('read').focus();
@@ -106,18 +101,20 @@ async function save(text, personal = false) {
   if (saving) return;
   if (!text.trim()) { $('form-error').textContent = mode === 'gift' ? 'Напиши желание или вставь ссылку.' : 'Напиши ответ или выбери кнопку ниже.'; $('message').focus(); return; }
   saving = true; $('form-error').textContent = ''; $('modal').querySelectorAll('button').forEach(b => b.disabled = true);
+  const submitLabel = $('submit-message').textContent;
+  $('submit-message').textContent = 'Сохраняю…';
   // Keep the same ID when retrying the same message after a lost response.
   if (!pending || pending.text !== text) pending = {id:editingId || makeId(), sessionId, type:mode, text};
   try {
-    const response = await apiFetch('/api/entries', {method:editingId ? 'PATCH' : 'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(pending), signal:AbortSignal.timeout(12000)});
-    const data = await response.json(); if (!response.ok) throw Error(data.error || 'Не удалось сохранить.');
+    const response = await apiFetch('/api/entries', {method:editingId ? 'PATCH' : 'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(pending)});
+    const data = response.data; if (!response.ok) throw new ApiError('validation', data.error || 'Не удалось сохранить. Попробуй ещё раз.');
     const entryIndex = entries.findIndex(e => e.id === data.entry.id);
     if (entryIndex === -1) entries.push(data.entry); else entries[entryIndex] = data.entry;
     render(); $('modal').close(); pending = null;
     if (mode === 'reply') showEnding(personal);
     else toast(editingId ? 'Желание обновлено ♡' : 'Ещё одно желание под ёлкой ♡');
-  } catch (e) { $('form-error').textContent = e.name === 'TimeoutError' ? 'Сервер не ответил. Текст остался в окне — попробуй ещё раз.' : (e.message === 'Failed to fetch' ? 'Не удалось связаться с сервером. Текст остался в окне — попробуй ещё раз, когда связь появится.' : e.message); }
-  finally { saving = false; $('modal').querySelectorAll('button').forEach(b => b.disabled = false); }
+  } catch (e) { $('form-error').textContent = requestErrorMessage(e); }
+  finally { saving = false; $('submit-message').textContent = submitLabel; $('modal').querySelectorAll('button').forEach(b => b.disabled = false); }
 }
 $('modal-form').addEventListener('submit', e => { e.preventDefault(); save($('message').value.trim()); });
 document.querySelectorAll('[data-answer]').forEach(b => b.addEventListener('click', () => save(b.dataset.answer + ($('message').value.trim() ? '\n\n' + $('message').value.trim() : ''))));
