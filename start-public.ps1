@@ -1,11 +1,11 @@
 $ErrorActionPreference = 'Stop'
+& (Join-Path $PSScriptRoot 'start-local.ps1')
 $supervisorPidFile = Join-Path $PSScriptRoot 'data/tunnel-supervisor.pid'
 if (Test-Path -LiteralPath $supervisorPidFile) {
     $supervisorId = [int](Get-Content -LiteralPath $supervisorPidFile)
     $existing = Get-CimInstance Win32_Process -Filter "ProcessId = $supervisorId" -ErrorAction SilentlyContinue
     if ($existing -and $existing.Name -eq 'node.exe' -and $existing.CommandLine -match 'public-tunnel\.mjs') { Write-Host 'Публичное соединение уже работает.'; exit }
 }
-& (Join-Path $PSScriptRoot 'start-local.ps1')
 $cloudflaredPath = Join-Path $PSScriptRoot '.deploy/cloudflared.exe'
 if (!(Test-Path -LiteralPath $cloudflaredPath)) { throw 'Нужен официальный cloudflared.exe в .deploy. Инструкция — в README.md.' }
 $nodePath = (Get-Command node).Source
